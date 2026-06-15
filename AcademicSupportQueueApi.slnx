@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AcademicSupportQueueApi.Api/AcademicSupportQueueApi.Api.csproj" />
+    <Project Path="src/AcademicSupportQueueApi.Application/AcademicSupportQueueApi.Application.csproj" />
+    <Project Path="src/AcademicSupportQueueApi.Domain/AcademicSupportQueueApi.Domain.csproj" />
+    <Project Path="src/AcademicSupportQueueApi.Infrastructure/AcademicSupportQueueApi.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AcademicSupportQueueApi.UnitTests/AcademicSupportQueueApi.UnitTests.csproj" />
+  </Folder>
+</Solution>
