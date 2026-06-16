@@ -1,4 +1,6 @@
-namespace AcademicSupportQueueApi.Domain.Entidades;
+using AcademicSupportQueueApi.Domain.Enums;
+
+namespace AcademicSupportQueueApi.Domain.Entities;
 
 public class Atendimento
 {
@@ -11,6 +13,8 @@ public class Atendimento
     public string Disciplina { get; set; } = string.Empty;
 
     public string Descricao { get; set; } = string.Empty;
+
+    public TipoSolicitacao TipoSolicitacao { get; set; }
 
     public DateTime DataEntrega { get; set; }
 
