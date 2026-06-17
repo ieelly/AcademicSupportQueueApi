@@ -1,4 +1,4 @@
-using AcademicSupportQueueApi.Domain.Entities;
+using AcademicSupportQueueApi.Domain.Entidades;
 using AcademicSupportQueueApi.Domain.PriorityRules;
 using AcademicSupportQueueApi.Domain.Services;
 using AcademicSupportQueueApi.Infrastructure.Dados;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AcademicSupportQueueApi.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("solicitacoes-academicas")]
 public class AtendimentoController : ControllerBase
 {
     private readonly ContextoBanco _contexto;

@@ -1,4 +1,4 @@
-using AcademicSupportQueueApi.Domain.Entities;
+using AcademicSupportQueueApi.Domain.Entidades;
 using Microsoft.EntityFrameworkCore;
 
 namespace AcademicSupportQueueApi.Infrastructure.Dados;
