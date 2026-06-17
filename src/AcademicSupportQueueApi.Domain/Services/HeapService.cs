@@ -1,4 +1,4 @@
-﻿using AcademicSupportQueueApi.Domain.Entities;
+﻿using AcademicSupportQueueApi.Domain.Entidades;
 
 namespace AcademicSupportQueueApi.Domain.Services;
 

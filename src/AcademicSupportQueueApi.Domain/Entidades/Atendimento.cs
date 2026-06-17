@@ -1,6 +1,6 @@
 using AcademicSupportQueueApi.Domain.Enums;
 
-namespace AcademicSupportQueueApi.Domain.Entities;
+namespace AcademicSupportQueueApi.Domain.Entidades;
 
 public class Atendimento
 {

@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+	  <Compile Remove="NovaPasta\**" />
+	  <EmbeddedResource Remove="NovaPasta\**" />
+	  <None Remove="NovaPasta\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\AcademicSupportQueueApi.Domain\AcademicSupportQueueApi.Domain.csproj" />
 		<ProjectReference Include="..\AcademicSupportQueueApi.Application\AcademicSupportQueueApi.Application.csproj" />
 	</ItemGroup>

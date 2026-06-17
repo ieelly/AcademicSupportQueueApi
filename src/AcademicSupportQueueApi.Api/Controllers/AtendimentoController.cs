@@ -1,47 +1,40 @@
-using AcademicSupportQueueApi.Domain.Entities;
+using AcademicSupportQueueApi.Domain.Entidades;
+using AcademicSupportQueueApi.Domain.Interfaces;
 using AcademicSupportQueueApi.Domain.PriorityRules;
 using AcademicSupportQueueApi.Domain.Services;
-using AcademicSupportQueueApi.Infrastructure.Dados;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AcademicSupportQueueApi.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("solicitacoes-academicas")]
 public class AtendimentoController : ControllerBase
 {
-    private readonly ContextoBanco _contexto;
+    private readonly IAtendimentoRepository _repositorio;
     private readonly PrioridadeService _prioridadeService;
     private readonly HeapService _heapService;
 
     public AtendimentoController(
-        ContextoBanco contexto,
-        PrioridadeService prioridadeService,
-        HeapService heapService)
+     IAtendimentoRepository repositorio,
+     PrioridadeService prioridadeService,
+     HeapService heapService)
     {
-        _contexto = contexto;
+        _repositorio = repositorio;
         _prioridadeService = prioridadeService;
         _heapService = heapService;
     }
 
     [HttpGet]
-    public async Task<IActionResult> Listar()
+    public async Task<IActionResult> Listar([FromQuery] int page = 1, [FromQuery] int size = 10)
     {
-        var atendimentos = await _contexto.Atendimentos
-            .Where(a => a.Status != "Excluido")
-            .ToListAsync();
-
+        var atendimentos = await _repositorio.ListarAsync(page, size);
         return Ok(atendimentos);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> BuscarPorId(Guid id)
     {
-        var atendimento = await _contexto.Atendimentos
-            .FirstOrDefaultAsync(a =>
-                a.Id == id &&
-                a.Status != "Excluido");
+        var atendimento = await _repositorio.BuscarPorIdAsync(id);
 
         if (atendimento == null)
             return NotFound("Atendimento não encontrado.");
@@ -50,68 +43,40 @@ public class AtendimentoController : ControllerBase
     }
 
     [HttpGet("buscar")]
-    public async Task<IActionResult> Buscar(
-        string? cpf,
-        string? descricao)
+    public async Task<IActionResult> Buscar([FromQuery] string? descricao)
     {
-        var query = _contexto.Atendimentos
-            .Where(a => a.Status != "Excluido");
+        if (string.IsNullOrWhiteSpace(descricao))
+            return BadRequest("Informe uma descrição para buscar.");
 
-        if (!string.IsNullOrWhiteSpace(cpf))
-        {
-            query = query.Where(a =>
-                a.Cpf.Contains(cpf));
-        }
-
-        if (!string.IsNullOrWhiteSpace(descricao))
-        {
-            query = query.Where(a =>
-                a.Descricao.Contains(descricao));
-        }
-
-        var resultado = await query.ToListAsync();
-
+        var resultado = await _repositorio.BuscarPorDescricaoAsync(descricao);
         return Ok(resultado);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Cadastrar(
-        Atendimento atendimento)
+    public async Task<IActionResult> Cadastrar(Atendimento atendimento)
     {
         atendimento.Id = Guid.NewGuid();
         atendimento.DataCriacao = DateTime.Now;
         atendimento.Status = "Aguardando";
 
         atendimento.Prioridade =
-            _prioridadeService.Calcular(
-                atendimento.TipoSolicitacao,
-                atendimento.DataEntrega);
+            _prioridadeService.Calcular(atendimento.TipoSolicitacao, atendimento.DataEntrega);
 
         _heapService.Adicionar(atendimento);
 
-        _contexto.Atendimentos.Add(atendimento);
+        await _repositorio.CadastrarAsync(atendimento);
+        await _repositorio.SalvarAsync();
 
-        await _contexto.SaveChangesAsync();
-
-        return CreatedAtAction(
-            nameof(BuscarPorId),
-            new { id = atendimento.Id },
-            atendimento);
+        return CreatedAtAction(nameof(BuscarPorId), new { id = atendimento.Id }, atendimento);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Atualizar(
-        Guid id,
-        Atendimento dados)
+    public async Task<IActionResult> Atualizar(Guid id, Atendimento dados)
     {
-        var atendimento =
-            await _contexto.Atendimentos.FindAsync(id);
+        var atendimento = await _repositorio.BuscarPorIdAsync(id);
 
-        if (atendimento == null ||
-            atendimento.Status == "Excluido")
-        {
+        if (atendimento == null)
             return NotFound("Atendimento não encontrado.");
-        }
 
         atendimento.NomeAluno = dados.NomeAluno;
         atendimento.Cpf = dados.Cpf;
@@ -119,15 +84,12 @@ public class AtendimentoController : ControllerBase
         atendimento.Descricao = dados.Descricao;
         atendimento.TipoSolicitacao = dados.TipoSolicitacao;
         atendimento.DataEntrega = dados.DataEntrega;
-
         atendimento.Prioridade =
-            _prioridadeService.Calcular(
-                atendimento.TipoSolicitacao,
-                atendimento.DataEntrega);
-
+            _prioridadeService.Calcular(atendimento.TipoSolicitacao, atendimento.DataEntrega);
         atendimento.DataAtualizacao = DateTime.Now;
 
-        await _contexto.SaveChangesAsync();
+        await _repositorio.AtualizarAsync(atendimento);
+        await _repositorio.SalvarAsync();
 
         return Ok(atendimento);
     }
@@ -135,19 +97,17 @@ public class AtendimentoController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Excluir(Guid id)
     {
-        var atendimento =
-            await _contexto.Atendimentos.FindAsync(id);
+        var atendimento = await _repositorio.BuscarPorIdAsync(id);
 
-        if (atendimento == null ||
-            atendimento.Status == "Excluido")
-        {
+        if (atendimento == null)
             return NotFound("Atendimento não encontrado.");
-        }
 
         atendimento.Status = "Excluido";
         atendimento.DataExclusao = DateTime.Now;
+        atendimento.DataAtualizacao = DateTime.Now;
 
-        await _contexto.SaveChangesAsync();
+        await _repositorio.AtualizarAsync(atendimento);
+        await _repositorio.SalvarAsync();
 
         return NoContent();
     }
