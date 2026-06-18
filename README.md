@@ -217,6 +217,123 @@ GET /solicitacoes-academicas/estatisticas
 
 ---
 
+# Massa de Dados para Testes
+
+Os exemplos abaixo podem ser utilizados no endpoint:
+
+```http
+POST /solicitacoes-academicas
+```
+
+# Massa de Dados para Testes
+
+Os exemplos abaixo podem ser utilizados no endpoint:
+
+```http
+POST /solicitacoes-academicas
+```
+
+## Solicitação 1
+
+```json
+{
+  "nomeAluno": "Maria Silva",
+  "cpf": "12345678901",
+  "disciplina": "Estruturas de Dados",
+  "descricao": "Trabalho final para amanhã",
+  "tipoSolicitacao": 1,
+  "dataEntrega": "2026-06-19T23:59:59"
+}
+```
+
+## Solicitação 2
+
+```json
+{
+  "nomeAluno": "João Pedro",
+  "cpf": "23456789012",
+  "disciplina": "Banco de Dados",
+  "descricao": "Dúvida sobre normalização",
+  "tipoSolicitacao": 2,
+  "dataEntrega": "2026-06-22T23:59:59"
+}
+```
+
+## Solicitação 3
+
+```json
+{
+  "nomeAluno": "Ana Clara",
+  "cpf": "34567890123",
+  "disciplina": "Programação Web",
+  "descricao": "Orientação para projeto",
+  "tipoSolicitacao": 3,
+  "dataEntrega": "2026-06-28T23:59:59"
+}
+```
+
+## Solicitação 4
+
+```json
+{
+  "nomeAluno": "Carlos Henrique",
+  "cpf": "45678901234",
+  "disciplina": "Redes de Computadores",
+  "descricao": "Dúvida geral sobre conteúdo",
+  "tipoSolicitacao": 3,
+  "dataEntrega": "2026-07-15T23:59:59"
+}
+```
+
+## Solicitação 5
+
+```json
+{
+  "nomeAluno": "Fernanda Souza",
+  "cpf": "56789012345",
+  "disciplina": "Algoritmos",
+  "descricao": "Prova de recuperação amanhã",
+  "tipoSolicitacao": 1,
+  "dataEntrega": "2026-06-18T23:59:59"
+}
+```
+
+## Solicitação 6
+
+```json
+{
+  "nomeAluno": "Lucas Oliveira",
+  "cpf": "67890123456",
+  "disciplina": "POO",
+  "descricao": "Primeira solicitação de empate",
+  "tipoSolicitacao": 2,
+  "dataEntrega": "2026-06-25T23:59:59"
+}
+```
+
+## Solicitação 7
+
+```json
+{
+  "nomeAluno": "Juliana Costa",
+  "cpf": "78901234567",
+  "disciplina": "POO",
+  "descricao": "Segunda solicitação de empate",
+  "tipoSolicitacao": 2,
+  "dataEntrega": "2026-06-25T23:59:59"
+}
+```
+
+Esses registros permitem validar:
+
+* Cadastro de solicitações.
+* Cálculo automático da prioridade.
+* Ordenação da fila por prioridade.
+* Critério de desempate por data de criação.
+* Consulta do próximo atendimento.
+* Atendimento da próxima solicitação.
+* Atualização de status.
+* Estatísticas da fila.
 
 # Resultado
 
