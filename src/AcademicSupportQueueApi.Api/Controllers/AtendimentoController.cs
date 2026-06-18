@@ -1,3 +1,4 @@
+using AcademicSupportQueueApi.Domain.DTOs;
 using AcademicSupportQueueApi.Domain.Entidades;
 using AcademicSupportQueueApi.Domain.Interfaces;
 using AcademicSupportQueueApi.Domain.PriorityRules;
@@ -110,5 +111,73 @@ public class AtendimentoController : ControllerBase
         await _repositorio.SalvarAsync();
 
         return NoContent();
+    }
+    [HttpGet("proximo")]
+    public async Task<IActionResult> Proximo()
+    {
+        var atendimentos = await _repositorio.ListarAsync(1, 1000);
+
+        var proximo = atendimentos
+            .Where(a => a.Status == "Aguardando")
+            .OrderByDescending(a => a.Prioridade)
+            .ThenBy(a => a.DataCriacao)
+            .FirstOrDefault();
+
+        if (proximo == null)
+            return NotFound("Nenhum atendimento aguardando.");
+
+        return Ok(proximo);
+    }
+    [HttpPost("proximo/atender")]
+    public async Task<IActionResult> AtenderProximo()
+    {
+        var atendimentos = await _repositorio.ListarAsync(1, 1000);
+
+        var proximo = atendimentos
+            .Where(a => a.Status == "Aguardando")
+            .OrderByDescending(a => a.Prioridade)
+            .ThenBy(a => a.DataCriacao)
+            .FirstOrDefault();
+
+        if (proximo == null)
+            return NotFound("Nenhum atendimento aguardando.");
+
+        proximo.Status = "EmAtendimento";
+        proximo.DataAtualizacao = DateTime.Now;
+
+        await _repositorio.AtualizarAsync(proximo);
+        await _repositorio.SalvarAsync();
+
+        return Ok(proximo);
+    }
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> AtualizarStatus(
+    Guid id,
+    [FromBody] AtualizarStatusDto dto)
+    {
+        var atendimento = await _repositorio.BuscarPorIdAsync(id);
+
+        if (atendimento == null)
+            return NotFound();
+
+        atendimento.Status = dto.Status;
+        atendimento.DataAtualizacao = DateTime.Now;
+
+        await _repositorio.AtualizarAsync(atendimento);
+        await _repositorio.SalvarAsync();
+
+        return Ok(atendimento);
+    }
+    [HttpGet("estatisticas")]
+    public async Task<IActionResult> Estatisticas()
+    {
+        var atendimentos = await _repositorio.ListarAsync(1, 1000);
+
+        return Ok(new
+        {
+            aguardando = atendimentos.Count(a => a.Status == "Aguardando"),
+            emAtendimento = atendimentos.Count(a => a.Status == "EmAtendimento"),
+            concluidos = atendimentos.Count(a => a.Status == "Concluido")
+        });
     }
 }
