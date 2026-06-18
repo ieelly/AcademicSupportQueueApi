@@ -2,8 +2,9 @@
 
 ## Integrantes
 
-* Ranielly Fernandes da Silva Nunes
-* (Adicionar demais integrantes do grupo)
+* Ranielly Fernandes
+* Ana Caroline
+* Scott Iwano
 
 ## Descrição do Projeto
 
@@ -216,15 +217,6 @@ GET /solicitacoes-academicas/estatisticas
 
 ---
 
-# Testes
-
-Para executar os testes automatizados:
-
-```bash
-dotnet test
-```
-
----
 
 # Resultado
 
